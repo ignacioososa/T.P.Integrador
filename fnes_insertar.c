@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "estructuras.h"
 
@@ -80,7 +80,7 @@ struct mediciones* insertar_mediciones(struct mediciones *p, struct mediciones *
 			}
 		}
 	}
-	
+
 	return l;
 }
 
@@ -100,33 +100,33 @@ struct facturas* insertar_facturas(struct facturas *p,struct facturas *l){
 
 struct usuarios* borrar_usuario(struct usuarios *l){
 	struct usuarios *aux=NULL;
-	
+
 	while(l != NULL){
 		aux = l;
 		l = l->sgte;
 		aux->sgte = NULL;
 		free(aux);
 	}
-	
+
 	return NULL;
 }
 
 struct medxusuario* borrar_medxusuario(struct medxusuario *l){
 	struct medxusuario *aux=NULL;
-	
+
 	while(l != NULL){
 		aux = l;
 		l = l->sgte;
 		aux->sgte = NULL;
 		free(aux);
 	}
-	
+
 	return NULL;
 }
 
 struct medidores* borrar_medidores(struct medidores *l){
 	struct medidores *aux=NULL,*bor=NULL,*ant=NULL;
-	
+
 	if(l != NULL){
 		ant = l;
 		l = l->sgte;
@@ -137,19 +137,19 @@ struct medidores* borrar_medidores(struct medidores *l){
 			aux->sgte = NULL;
 			free(aux);
 		}
-		
+
 		if(l == ant){
 			l->sgte = NULL;
 			free(aux);
 		}
 	}
-	
+
 	return NULL;
 }
 
 struct mediciones* borrar_mediciones(struct mediciones *l){
 	struct mediciones *aux=NULL;
-	
+
 	while(l != NULL){
 		aux = l;
 		l = l->sgte;
@@ -159,19 +159,19 @@ struct mediciones* borrar_mediciones(struct mediciones *l){
 		}
 		free(aux);
 	}
-	
+
 	return NULL;
 }
 
 struct facturas* borrar_facturas(struct facturas *l){
 	struct facturas *aux=NULL;
-	
+
 	while(l != NULL){
 		aux = l;
 		l = l->sgte;
 		aux->sgte = NULL;
 		free(aux);
 	}
-	
+
 	return NULL;
 }

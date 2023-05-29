@@ -50,8 +50,10 @@ struct facturas{
 
 struct usuarios* lista_usuario();
 struct medxusuario* lista_medxusuario();
+struct medxusuario *lista_rutacaminante();//crea una lista enlasada simple de los usuarios que tienen "fechabaja = 0"
 struct medidores* lista_medidores();
 struct mediciones* lista_mediciones();
+struct mediciones* lista_NVmedicion(); //crea lista doblemente enlasada con los con los datos actualizados que recaudo el caminante
 struct facturas* lista_facturas();
 
 
@@ -71,7 +73,6 @@ struct mediciones* borrar_mediciones(struct mediciones*);
 struct facturas* borrar_facturas(struct facturas*);
 
 /*									PROTOTIPOS PARA LAS FUNCIONES BORRAR LISTA								*/
-void archivo_facturas(struct facturas*);
 
 
 void recorrer_usu(struct usuarios*);
@@ -81,5 +82,13 @@ void recorrer_mediciones(struct mediciones*);
 void recorrer_mediciones_2(struct mediciones*);
 void recorrer_facturas(struct facturas*);
 
-#endif
+/*									PROTOTIPO PARA CREAR LA RUTA DE LOS CAMINANTES							*/
+void crearuta(struct medxusuario *);
 
+
+/*									PROTOTIPO PARA ACTUALIZAR EL ARCHIVOS						*/
+void archivo_facturas(struct facturas*);
+void actualiza_mediciones(struct mediciones *);
+
+
+#endif
