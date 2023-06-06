@@ -1,4 +1,7 @@
-#include "fnes_insertar.c"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "estructuras.h"
 
 /*******************************FUNCION PARA CREAR LA LISTAS**********************************************/
 
