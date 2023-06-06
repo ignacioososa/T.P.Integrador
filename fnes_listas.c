@@ -1,7 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "estructuras.h"
+#include "fnes_insertar.c"
 
 /*******************************FUNCION PARA CREAR LA LISTAS**********************************************/
 
@@ -30,7 +27,7 @@ struct usuarios* lista_usuario(){
 
 				i++; j=0;
 				memset(aux,0,100);
-				while(linea[i]!=','){ //recorre la cadena "linea" hasta que encuentra una "," para así quedarme con el valor, en este caso "apellido y nombre"
+				while(linea[i]!=','){ //recorre la cadena "linea" hasta que encuentra una "," para as? quedarme con el valor, en este caso "apellido y nombre"
 					aux[j] = linea[i];
 					j++; i++;
 				}
@@ -362,10 +359,67 @@ struct facturas* lista_facturas(){
 }
 //----------------------------------------------------------------------------------
 
-
-
-
-
+struct costos* lista_costos(){
+	FILE *costo; //puntero para el archivo "Costos.txt"
+	struct costos *nv=NULL,*L=NULL;
+	char linea[1000],aux[100];
+	int i,j;
+	
+	if((costo=fopen("Costos.txt","r"))!=NULL){
+		while(!feof(costo)){
+			nv = (struct costos *) malloc(sizeof(struct costos));
+			if(nv!=NULL){
+				i=0;
+				j=0;
+					
+				fgets(linea,sizeof(linea),costo);
+				
+				memset(aux,0,100); 
+				while(linea[i]!=','){
+					aux[j] = linea[i];
+					j++; i++;
+				}
+				nv->idcostos = atoi(aux); 
+				
+				i++; j=0;
+				memset(aux,0,100);
+				while(linea[i]!=','){
+					aux[j] = linea[i];
+					j++; i++;
+				}
+				nv->mtsdesde = atoi(aux);
+			
+				i++; j=0;
+				memset(aux,0,100);
+				while(linea[i]!=','){
+					aux[j] = linea[i];
+					j++; i++;
+				}
+				nv->mtshasta = atoi(aux);
+				
+				i++; j=0;
+				memset(aux,0,100);
+				while(linea[i]!=','){
+					aux[j] = linea[i];
+					j++; i++;
+				}
+				nv->valorMetro = atoi(aux);
+			
+				nv->sgte = NULL;
+			
+				L = insertar_costos(nv,L);
+				nv = NULL;
+			}
+			else
+				printf("Error");
+		}	
+	}else
+		printf("Error");
+	
+	fclose(costo); //cierra el archivo "Costos.txt"
+	
+	return L; //retorna el puntero inicial al main
+}
 
 //Crea una lista con los usuarios que tienen "fechabaja = 0".(ACTIVIDAD 1)
 struct medxusuario *lista_rutacaminante(){
@@ -424,7 +478,7 @@ struct medxusuario *lista_rutacaminante(){
 
 				nv->sgte = NULL;
 				
-				if(nv->fechabaja == 0){
+				if((nv->fechabaja == 0)&&(nv->fechaalta <= fecha)){
 					L = insertar_medxusuario(nv,L);
 				}
 				
@@ -455,10 +509,34 @@ struct medxusuario *lista_rutacaminante(){
 struct mediciones* lista_NVmedicion(){
 	FILE *NVmedicion; //puntero para el archivo "Ruta_caminante.txt"
 	struct mediciones *nv=NULL,*L=NULL;
-	char linea[1000],aux[100];
-	int i,j;
+	char linea[1000],aux[100],periodo[7],nomArchivo[30] = "Ruta_caminante_",anio[5],mes[3];
+	int i,j,b = 0,a,m;
+	
+	while(b != 1){
+		
+		printf("Ingrese el periodo (aaaamm): ");
+		gets(periodo);
+		
+		strncpy(anio,periodo,4);
+		anio[4] = '\0';
+		strncpy(mes,periodo + 4,2);
+		mes[2] = '\0';
+		a = atoi(anio);
+		m = atoi(mes);
 
-	if((NVmedicion=fopen("Ruta_caminante.txt","r"))!=NULL){ //hay que modificar el nombre, para que tenga el periodo
+		if((a != 2023)||(m < 1)||(m > 12)){//ajustar rango
+			printf("\nERROR: fecha no valida\n");
+		}else{
+			b = 1;
+		}
+
+	}
+	
+	strcat(nomArchivo,anio);
+	strcat(nomArchivo,mes);
+	strcat(nomArchivo,".txt");
+
+	if((NVmedicion=fopen(nomArchivo,"r"))!=NULL){
 		while(!feof(NVmedicion)){
 			nv = (struct mediciones *) malloc(sizeof(struct mediciones));
 			if(nv!=NULL){
@@ -510,9 +588,9 @@ struct mediciones* lista_NVmedicion(){
 
 	}
 	else
-		printf("Error");
+		printf("\nERROR: no se pudo abrir este archivo\n");
 
-	fclose(NVmedicion); //cierra el archivo "Ruta_caminante.txt"
+	fclose(NVmedicion); //cierra el archivo "Ruta_caminante_aaaa/mm.txt"
 
 	return L; //retorna el puntero inicial al main
 }
@@ -581,14 +659,32 @@ void actualiza_mediciones(struct mediciones *l){
 //Crea la ruta en un archivo csv llamado "Ruta_caminante.txt", con la lista envida por parametro (ACTIVIDAD 1)
 void crearuta(struct medxusuario *l){
 	FILE *ruta=NULL;
-	char periodo[7],nomArchivo[30] = "Ruta_caminante_";
+	char periodo[7],nomArchivo[30] = "Ruta_caminante_",anio[5],mes[3];
+	int a,m,b = 0;
 	
-//	esta parte hay que arreglar (el periodo)
-	printf("\nIngrese anio y mes (aaaamm): ");
-	scanf("%s",&periodo);
-	strcat(nomArchivo,periodo);
+	while(b != 1){
+		
+		printf("Ingrese el periodo (aaaamm): ");
+		gets(periodo);
+		
+		strncpy(anio,periodo,4);
+		anio[4] = '\0';
+		strncpy(mes,periodo + 4,2);
+		mes[2] = '\0';
+		a = atoi(anio);
+		m = atoi(mes);
+
+		if((a != 2023)||(m < 1)||(m > 12)){//ajustar rango
+			printf("\nERROR: fecha no valida\n");
+		}else{
+			b = 1;
+		}
+
+	}
+	
+	strcat(nomArchivo,anio);
+	strcat(nomArchivo,mes);
 	strcat(nomArchivo,".txt");
-//	---------------------------
 	
 	if((ruta=fopen(nomArchivo,"r"))!=NULL){
 		printf("\nERROR: este archivo ya fue creado\n");
@@ -605,7 +701,7 @@ void crearuta(struct medxusuario *l){
 				l = l->sgte;
 			}
 		}
-		else printf("ERROR DE APERTURA");
+		else printf("\nERROR: no se pudo abrir arvhivo\n");
 
 		fclose(ruta);
 	}
@@ -679,4 +775,123 @@ void recorrer_facturas(struct facturas *r){
 		printf("%ld\n",r->periodo);
 		recorrer_facturas(r->sgte);
 	}
+}
+
+void recorrer_costos(struct costos *r){
+	if(r!=NULL){
+		printf("%d, %d\n",r->idcostos,r->valorMetro);
+		recorrer_costos(r->sgte);
+	}
+}
+
+//								FUNCIONES PARA FACTURAR
+int buscar_facturas(long x, struct facturas *r){
+	int v=0;
+	while((r!=NULL)&&(!v)){
+		if(r->periodo==x){
+			v=1;
+		}	
+		r = r->sgte;
+	}
+	return v;
+}
+
+struct facturas* facturar(long p_act, struct mediciones *m, struct facturas *f, struct costos *c){
+	struct mediciones *aux=NULL, *aux2=NULL;
+	struct facturas *n=NULL;
+	long p_ant;
+	float lect_act, lect_ant, consumo = 0;
+	int v=0;
+	
+	aux=m;
+	aux2=aux;
+	p_ant=periodo_anterior(p_act); //cambiar
+	
+	while(m!=NULL){
+		if(m->periodo==p_act){
+			v=1;
+			//cambiar
+			aux2=aux;
+			while(aux2!=NULL){
+				if((m->idcuenta==aux2->idcuenta)&&(p_ant==aux2->periodo)){
+					lect_ant=aux2->lectura;
+					aux2=NULL;
+				}else
+					aux2=aux2->sgte;
+			}
+			lect_act=m->lectura;
+			consumo= lect_act-lect_ant;
+			n=(struct facturas *) malloc(sizeof(struct facturas));
+			if(n!=NULL){
+				n->consumo = consumo;
+				n->fechaemision = fecha_emision();
+				n->idcuenta = m->idcuenta;
+				n->pagado = 0;
+				n->periodo = p_act;
+				n->totalapagar = buscar_costo(consumo,c);
+				n->sgte = NULL;
+				f = insertar_facturas(n,f);
+				n=NULL;
+			}else
+				printf("\nError en facturar");
+		}
+		m=m->sgte;
+	}
+	
+	if(v==0)
+		printf("\nNo se encontraron mediciones del periodo.\n");
+	else
+		printf("\nFacturacion exitosa.\n");
+		
+	return f;
+}
+
+long periodo_anterior(long x){
+	long y;
+	y = x-1;
+	if(y%10==0){
+		y = (x/100);
+		y = y - 1;
+		y = (y*100) + 12;
+	}
+	return y;
+}
+
+float buscar_costo(float consumo, struct costos *r){
+	float resto;
+	float costo=0;
+
+/*
+1,0,15,130,
+2,15,25,145,
+3,25,45,155,
+4,45,1000,175,
+*/
+	while(r!=NULL){
+		if(consumo>=r->mtshasta){
+			costo = costo + (r->mtshasta - r->mtsdesde) * r->valorMetro;
+		}else{
+			if(consumo>=r->mtsdesde){
+				resto = consumo - r->mtsdesde;
+				costo = costo + resto * r->valorMetro;
+			}
+		/*	else
+				r = NULL;*/
+		}
+		
+		r=r->sgte;
+	}
+	return costo;
+}
+
+long fecha_emision(){
+	
+	long fecha;
+	SYSTEMTIME st;
+    GetLocalTime(&st);
+
+    // Construir el valor long de la fecha actual
+    fecha = st.wYear * 10000 + st.wMonth * 100 + st.wDay;
+
+    return fecha;
 }
